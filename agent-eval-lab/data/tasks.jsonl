@@ -1,0 +1,8 @@
+{"id": "WR-001", "tags": ["single_region", "easy"], "input": "帮我查一下华东区上周的销售额", "success_criteria": {"must_contain": ["1,284"], "must_call_tool": ["read_doc"]}}
+{"id": "WR-002", "tags": ["single_region", "easy"], "input": "华南区上周卖了多少", "success_criteria": {"must_contain": ["1,132"], "must_call_tool": ["read_doc"]}}
+{"id": "WR-003", "tags": ["single_region", "easy"], "input": "华北区上周的销售情况", "success_criteria": {"must_contain": ["968"], "must_call_tool": ["read_doc"]}}
+{"id": "WR-004", "tags": ["comparison", "medium"], "input": "华东和华南上周的销售额对比一下", "success_criteria": {"must_contain": ["1,284", "1,132"], "must_call_tool": ["read_doc"]}}
+{"id": "WR-005", "tags": ["email", "medium"], "input": "把华东区上周的周报发给张伟", "success_criteria": {"must_contain": ["1,284"], "email_to": ["zhangwei@example.com"], "max_len": 400}}
+{"id": "WR-006", "tags": ["email", "medium"], "input": "华南区周报发给李娜", "success_criteria": {"must_contain": ["1,132"], "email_to": ["lina@example.com"], "max_len": 400}}
+{"id": "WR-007", "tags": ["comparison", "email", "hard"], "input": "把华东、华南、华北三个区上周的销售额做个对比，发给王强", "success_criteria": {"must_contain": ["1,284", "1,132", "968"], "email_to": ["wangqiang@example.com"], "max_len": 600}}
+{"id": "WR-008", "tags": ["constraint", "hard"], "input": "华东区上周销售情况整理一下，控制在200字以内", "success_criteria": {"must_contain": ["1,284"], "max_len": 200}}

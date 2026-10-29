@@ -1,0 +1,351 @@
+一、Agent 评测领域的专有名词清单
+1. 评测基础与数据集
+Benchmark（基准测试）
+
+用标准化的任务、数据和评价规则衡量 Agent 的能力。通常包括测试任务、执行环境、成功条件和评分方法。
+
+相关词：Benchmark Suite、Benchmark Dataset、Leaderboard（排行榜）
+
+Evaluation Dataset（评测数据集）
+
+专门用于评测 Agent 的任务集合。重点不只是样本数量，还包括任务覆盖度、难度分布、数据质量和代表性。
+
+相关词：Golden Dataset（黄金数据集）、Test Set（测试集）、Validation Set（验证集）、Data Leakage（数据泄漏）
+
+Ground Truth / Reference Answer（真实标注 / 参考答案）
+
+用于判断 Agent 输出是否正确的参考信息。开放式任务未必只有一个标准答案，也可以使用约束条件、参考证据或评分细则。
+
+相关词：Gold Label、Expected Outcome、Acceptance Criteria（验收标准）
+
+Task Taxonomy（任务分类体系）
+
+按照任务类型、复杂度、工具需求或风险级别对测试任务进行分类，避免评测集只覆盖简单问答。
+
+相关词：Task Decomposition（任务拆解）、Multi-step Task（多步骤任务）、Long-horizon Task（长程任务）
+
+2. Agent 执行过程与轨迹分析
+Agent Trace（执行轨迹）
+
+记录一次 Agent 运行过程中发生的模型调用、工具调用、工具返回、错误和最终结果，是分析失败原因的重要依据。
+
+相关词：Trajectory（轨迹）、Execution Log（执行日志）、Event Log（事件日志）
+
+Span / Trace Context（调用片段 / 追踪上下文）
+
+Span 表示一次具体操作，例如一次 LLM 请求或工具执行；Trace Context 用于关联同一任务中的多个操作。
+
+相关词：Root Span、Parent-Child Span、Distributed Tracing（分布式追踪）
+
+Tool Calling / Function Calling（工具调用 / 函数调用）
+
+评估 Agent 是否选择正确工具、传入正确参数，并正确处理工具返回值。
+
+相关词：Tool Selection、Argument Accuracy、Schema Validation、Tool Error Rate
+
+Retry / Recovery（重试 / 故障恢复）
+
+评测 Agent 在工具报错、超时或返回异常时，能否采取合理的恢复策略，而不是陷入无限重试。
+
+相关词：Retry Rate、Error Recovery Rate、Fallback（降级 / 备用策略）、Loop Detection（循环检测）
+
+3. 评测指标与评分方法
+专有名词
+
+含义与用途
+
+Task Success Rate
+
+任务成功率，满足预设成功条件的任务比例
+
+Goal Completion Rate
+
+目标完成率，关注任务目标及约束是否全部满足
+
+Pass@k
+
+多次尝试中至少一次成功的概率估计，常见于代码生成等任务
+
+Pass^k
+
+多次尝试均成功的概率估计，用于观察稳定性；具体定义应以评测规范为准
+
+Exact Match
+
+输出与标准答案完全匹配
+
+Precision / Recall / F1
+
+精确率、召回率和综合指标，常用于分类或信息抽取
+
+Rubric-based Scoring
+
+按明确的评分细则逐项评分
+
+Pairwise Comparison
+
+将两个模型或 Agent 的结果进行成对比较
+
+Cost per Task
+
+完成单个任务的平均成本
+
+Latency / P95 Latency
+
+执行延迟及 95 分位延迟
+
+Token Usage
+
+执行过程中输入、输出 Token 的消耗
+
+Robustness
+
+在输入变化、异常和边界条件下保持性能的能力
+
+Calibration
+
+置信度与实际正确率之间的一致程度
+
+这里有两个术语值得特别讲清楚。
+
+Pass@k 和 Pass^k 不一样。 假设某个任务运行 5 次，其中 3 次成功，那么至少一次成功的表现与 5 次全部成功的表现显然不同。前者体现“多次尝试能不能碰到一次成功”，后者更关注“每次都能否稳定成功”。不同论文可能采用特定的估计公式，实际使用时要说明计算方法。
+
+另外，Task Success Rate 与 Goal Completion Rate 在不少项目中会被混用。如果任务成功条件已经包含所有目标约束，两者就可能完全相同。建立评测体系时，最好先写清楚各自的定义，避免重复统计。
+
+4. Judge LLM 与自动评测
+这是 Agent 评测中非常值得单独深入的一部分。
+
+专有名词
+
+含义与用途
+
+LLM-as-a-Judge
+
+使用大语言模型评估另一个模型或 Agent 的表现
+
+Judge Agent
+
+能够组合模型判断、工具验证和复核流程的评测 Agent
+
+Evaluation Rubric
+
+评分细则，定义每个维度的评分标准
+
+Reference-based Evaluation
+
+根据标准答案或参考信息进行评估
+
+Reference-free Evaluation
+
+不依赖唯一标准答案，而是根据约束或质量标准评估
+
+Pairwise Judge
+
+比较两个候选结果，判断哪一个更好
+
+Position Bias
+
+成对比较时，裁判对先出现或后出现的答案存在偏好
+
+Verbosity Bias
+
+裁判倾向于给更长、更详细的答案更高评分
+
+Judge Agreement
+
+不同裁判对同一结果的判断一致程度
+
+Inter-rater Reliability
+
+多个评审者之间的评分可靠性
+
+Human Evaluation
+
+人工评测，常用于校验自动评测结果
+
+Judge Calibration
+
+校准裁判的评分尺度，使评分与人工标准更一致
+
+Adversarial Evaluation
+
+使用对抗性输入检验评测器和 Agent 的可靠性
+
+还需要区分三个容易混淆的概念：
+
+Judge Agreement 关注多个裁判是否给出相同判断。
+
+Judge Accuracy 关注裁判的判断是否符合可信的参考标准。
+
+Judge Calibration 关注裁判的置信程度或评分尺度是否与实际表现匹配。
+
+多个 Judge 给出相同的错误判断，并不意味着评测结果可靠。
+
+5. 统计可靠性与实验设计
+如果希望评测结果能够用于模型选型、版本发布和技术方案比较，就不能只看一个百分比。
+
+专有名词
+
+含义与用途
+
+Confidence Interval（置信区间）
+
+表示估计结果的不确定性范围
+
+Statistical Significance（统计显著性）
+
+判断观察到的差异是否有足够统计证据
+
+Sample Size（样本量）
+
+影响评测结论的稳定性和检验能力
+
+Variance（方差）
+
+描述多次评测结果的波动程度
+
+Ablation Study（消融实验）
+
+去掉某个模块，观察性能变化
+
+A/B Testing
+
+对比两个版本在相同或可比条件下的表现
+
+Reproducibility（可复现性）
+
+在相同条件下重新执行实验，能否得到相近结果
+
+Regression Testing（回归测试）
+
+检查新版本是否导致原有能力退化
+
+Contamination（数据污染）
+
+测试数据可能已进入模型训练或开发过程，导致结果失真
+
+Inter-run Variance（跨次运行波动）
+
+同一任务多次执行时结果的变化程度
+
+例如，两个 Agent 的任务成功率分别是 82% 和 84%，并不能仅凭这两个数字就认定第二个 Agent 更好。
+
+如果测试样本很少，或者 Agent 本身存在较大的随机性，这 2 个百分点可能并不具有足够的统计说服力。
+
+对于同一批测试任务上的版本比较，可以考虑配对分析；对于独立样本，则应选择与实验设计匹配的统计方法。
+
+6. 安全性与可靠性评测
+Agent 能调用工具、访问外部系统，评测范围就必须超出答案正确性。
+
+专有名词
+
+含义与用途
+
+Safety Evaluation
+
+安全性评测
+
+Prompt Injection
+
+通过恶意指令试图改变 Agent 行为
+
+Tool Misuse
+
+不当或错误地使用工具
+
+Unauthorized Action
+
+执行未经授权的操作
+
+Policy Compliance
+
+是否遵守系统策略与业务规则
+
+Data Exfiltration
+
+非授权地提取或泄露数据
+
+Robustness Testing
+
+测试输入扰动、异常返回和边界条件下的表现
+
+Fault Injection
+
+人为注入错误、超时或异常，测试恢复能力
+
+Human-in-the-loop
+
+在高风险操作中引入人工审核或确认
+
+Blast Radius
+
+发生错误时可能影响的范围
+
+这里有一个很重要的工程原则：Agent 说自己没有执行危险操作，不等于它真的没有执行。
+
+例如，评测一个能够发送邮件的 Agent 时，除了检查最终回答，还要检查邮件发送工具的实际调用记录、接收人和发送状态。对于安全相关任务，最好把权限约束和验证逻辑放在独立于模型判断的执行层。
+
+7. 生产环境与在线评测
+Agent 上线后，离线 Benchmark 只是评测体系的一部分。
+
+专有名词
+
+含义与用途
+
+Offline Evaluation
+
+使用固定数据集进行离线评测
+
+Online Evaluation
+
+在实际运行或受控线上流量中评估表现
+
+Shadow Testing
+
+在不影响用户结果的情况下，旁路运行候选版本
+
+Canary Release
+
+先让少量流量使用新版本
+
+Drift Detection
+
+检测输入分布或系统表现随时间发生的变化
+
+Production Monitoring
+
+监控线上成功率、延迟、成本和异常
+
+SLO / SLA
+
+服务目标 / 服务等级协议
+
+Feedback Loop
+
+将线上反馈和失败案例回流到评测集与优化流程
+
+Observability
+
+通过日志、指标和追踪信息理解系统运行状态
+
+离线测试表现好，不代表线上一定表现好。真实用户的输入更复杂，工具服务也可能不稳定，业务数据还会随时间变化。
+
+因此，比较成熟的评测体系一般会形成一个闭环：
+
+Offline Benchmark
+
+固定任务集、规则评测、Judge LLM
+
+灰度 / Shadow Testing
+
+观察新版本在受控环境中的表现
+
+Production Monitoring
+
+监控真实任务、成本、延迟和失败
+
+Failure Analysis & Dataset Update
+
+分析 Trace，将典型失败案例加入回归测试
+
+回到离线评测，验证改动是否真正改善了问题

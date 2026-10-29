@@ -1,0 +1,2 @@
+# 只用标准库。接真模型时也不需要装 SDK —— common/llm.py 用 urllib 直接打 HTTP。
+# 这里留空是刻意的：clone 下来不用 pip install 任何东西就能跑 --mock。
